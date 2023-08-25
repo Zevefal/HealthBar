@@ -11,26 +11,44 @@ public class HealthBarDraw : MonoBehaviour
 
     private float _updateSpeed = 0.5f;
 
+    private Coroutine _drawHealth;
+
     private void Awake()
     {
-        _player = FindObjectOfType<Player>();
         _healthSlider = GetComponent<Slider>();
 
+        _player.HealthChanged += SetMaxHealth;
+    }
+
+    private void OnEnable()
+    {
         _player.HealthChanged += SetHealth;
     }
 
-    public void SetMaxHealth(int maximum)
+    private void OnDisable()
+    {
+        _player.HealthChanged -= SetHealth;
+    }
+
+    private void SetMaxHealth(int maximum)
     {
         _healthSlider.maxValue = maximum;
         _healthSlider.value = maximum;
+
+        _player.HealthChanged -= SetMaxHealth;
     }
 
     private void SetHealth(int target)
     {
-        StartCoroutine(AnimateSlider(target));
+        if (_drawHealth != null)
+        {
+            StopCoroutine(_drawHealth);
+        }
+
+        _drawHealth = StartCoroutine(AnimateSlider(target));
     }
 
-    IEnumerator AnimateSlider(int target)
+    private IEnumerator AnimateSlider(int target)
     {
         float currentTime = 0f;
 

@@ -6,8 +6,6 @@ using System;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField] public HealthBarDraw _healthDraw;
-
     [SerializeField] private int _maxHP = 100;
     [SerializeField] private int _currentHP;
 
@@ -16,7 +14,8 @@ public class Player : MonoBehaviour
     private void Start()
     {
         _currentHP = _maxHP;
-        _healthDraw.SetMaxHealth(_maxHP);
+
+        HealthChanged?.Invoke(_maxHP);
     }
 
     public void TakeDamage(int damage)
